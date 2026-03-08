@@ -1,0 +1,68 @@
+services:
+  frontend:
+    build:
+      context: ./frontend
+      dockerfile: Dockerfile
+    ports:
+      - "3000:3000"
+    environment:
+      - API_URL=http://host.docker.internal:3002
+
+  kurrentdb.db:
+    image: docker.kurrent.io/kurrent-latest/kurrentdb:latest
+    environment:
+      - KURRENTDB_CLUSTER_SIZE=1
+      - KURRENTDB_RUN_PROJECTIONS=All
+      - KURRENTDB_START_STANDARD_PROJECTIONS=true
+      - KURRENTDB_NODE_PORT=2113
+      - KURRENTDB_INSECURE=true
+      - KURRENTDB_ENABLE_ATOM_PUB_OVER_HTTP=true
+    ports:
+      - "2113:2113"
+    volumes:
+      - type: volume
+        source: kurrentdb-volume-data
+        target: /var/lib/kurrentdb
+      - type: volume
+        source: kurrentdb-volume-logs
+        target: /var/log/kurrentdb
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:2113/health/live"]
+      interval: 5s
+      timeout: 3s
+      retries: 10
+      start_period: 10s
+
+  mongodb:
+    image: mongo:latest
+    ports:
+      - "27017:27017"
+    volumes:
+      - type: volume
+        source: mongodb-data
+        target: /data/db
+
+  seed-products:
+    image: node:24-alpine
+    working_dir: /app
+    volumes:
+      - ./backend:/app
+      - backend-node-modules:/app/node_modules
+    environment:
+      - EVENT_STORE_CONNECTION_STRING=kurrentdb://kurrentdb.db:2113?tls=false
+      - CE_USE_BIG_INT=true
+    command: >
+      sh -c "
+        npm install &&
+        npm run seed-products
+      "
+    depends_on:
+      kurrentdb.db:
+        condition: service_healthy
+    restart: "no"
+
+volumes:
+  kurrentdb-volume-data:
+  kurrentdb-volume-logs:
+  mongodb-data:
+  backend-node-modules:
