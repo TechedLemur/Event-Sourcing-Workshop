@@ -78,7 +78,6 @@ export function updateCart(cart: Cart, event: StoreEventTypes) {
     // case XXX:
     // break;
     // case XXX:
-    // TASK: Remove the item from the cart
     // break;
     default:
       console.warn(`Unexpected event type: ${event.type}`);
