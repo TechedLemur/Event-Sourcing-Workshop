@@ -40,33 +40,59 @@ app.use("/orders", orderRouter(client));
 app.listen(PORT, async () => {
   storageClient.connect();
 
+  const productsCheckpoint: Checkpoint | undefined = await storageClient.get(
+    "checkpoints",
+    "products"
+  );
+  const productsCheckpointRevision = productsCheckpoint?.revision ?? "start";
+  console.info(
+    `Subscribing to products from revision ${productsCheckpointRevision}`
+  );
+
   const productsSubscriptionOptions: SubscribeToStreamOptions = {
-    fromRevision: "start",
+    fromRevision: productsCheckpointRevision,
   };
-  if (productsSubscriptionOptions.fromRevision === "start") {
+  if (productsCheckpointRevision === "start") {
     await storageClient.deleteAll("products");
   }
   client.subscribe(
     "$ce-product",
-    async (_id, _revision, event) => {
+    async (_id, revision, event) => {
       // console.info("Received product event:", _id, _revision, event);
       await handleProductEvent(event, storageClient);
+
+      await storageClient.store("checkpoints", "products", {
+        id: "products",
+        revision,
+      });
+      console.info(`Stored checkpoint for products at revision ${revision}`);
     },
     productsSubscriptionOptions
   );
 
+  const cartsCheckpoint: Checkpoint | undefined = await storageClient.get(
+    "checkpoints",
+    "carts"
+  );
+  const cartsCheckpointRevision = cartsCheckpoint?.revision ?? "start";
+
+  console.info(`Subscribing to carts from revision ${cartsCheckpointRevision}`);
   const cartSubscriptionOptions: SubscribeToStreamOptions = {
-    fromRevision: "start",
+    fromRevision: cartsCheckpointRevision,
   };
-  if (cartSubscriptionOptions.fromRevision === "start") {
+  if (cartsCheckpointRevision === "start") {
     // To avoid side effects of restarting the application, we delete all carts from the database if we start from the beginning.
     await storageClient.deleteAll("carts");
   }
   client.subscribe(
     "$ce-cart",
-    async (_id, _revision, event, streamId) => {
+    async (_id, revision, event, streamId) => {
       // console.info("Received cart event:", _id, _revision, event);
       await handleCartEvent(streamId, event, storageClient);
+      await storageClient.store("checkpoints", "carts", {
+        id: "carts",
+        revision,
+      });
     },
     cartSubscriptionOptions
   );
