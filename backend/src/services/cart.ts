@@ -86,15 +86,23 @@ export async function removeItemFromCart(
 export function updateCart(cart: Cart, event: StoreEventTypes) {
   // TASK: Select which events to handle in the switch and implement the logic to update the cart
   switch (event.type) {
-    // case XXX:
-    // break;
-    // case XXX:
-    // break;
+    case CartEventTypes.ProductAddedToCart:
+      cart.items.push({
+        id: event.subject,
+        productId: event.productId,
+        productName: event.productName,
+        productPrice: event.productPrice,
+      });
+      break;
+    case CartEventTypes.ProductRemovedFromCart:
+      cart.items = cart.items.filter((item) => item.id !== event.subject);
+      break;
     default:
       console.warn(`Unexpected event type: ${event.type}`);
       break;
   }
-  cart.total = 0; // TASK: Calculate the total price of the cart
+  // TASK: Calculate the total price of the cart
+  cart.total = cart.items.reduce((acc, item) => acc + item.productPrice, 0);
   return cart;
 }
 
@@ -103,13 +111,7 @@ export async function getCart(
   client: EventClient,
   cartId: string
 ): Promise<Cart> {
-  const streamName = getStreamName(cartId);
-  const events = client.read(streamName);
-  const cart = getEmptyCart(cartId);
-
-  for await (const event of events) {
-    updateCart(cart, event);
-  }
+  const cart = readCartStream(client, cartId);
   return cart;
 }
 
@@ -136,11 +138,15 @@ async function readCartStream(
   // https://docs.kurrent.io/clients/node/v1.1/reading-events.html#maxcount-1
   const events = client.read(streamName, {
     // TASK: Set the correct parameter here
+    maxCount: maxCount,
   });
   const cart = getEmptyCart(cartId);
 
   // TASK: Update the cart based on the events
   // ...
+  for await (const event of events) {
+    updateCart(cart, event);
+  }
 
   return cart;
 }
