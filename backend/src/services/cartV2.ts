@@ -44,7 +44,7 @@ export async function handleCartEvent(
   const cartId = getCartIdFromStreamName(streamName);
 
   // Get the cart from the database, or create a new one if it doesn't exist
-  const cart: Cart = (await db.get("carts", cartId)) ?? getEmptyCart(cartId); // TASK: Get the cart from the database here or create a new one if it doesn't exist
+  const cart: Cart = getEmptyCart(cartId); // TASK: Get the cart from the database here or create a new one if it doesn't exist
 
   // TASK: Update the cart based on the event
   // Maybe we already have a function for this in services/cart.ts?
