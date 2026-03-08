@@ -43,6 +43,9 @@ app.listen(PORT, async () => {
   const productsSubscriptionOptions: SubscribeToStreamOptions = {
     fromRevision: "start",
   };
+  if (productsSubscriptionOptions.fromRevision === "start") {
+    await storageClient.deleteAll("products");
+  }
   client.subscribe(
     "$ce-product",
     async (_id, _revision, event) => {
@@ -55,6 +58,10 @@ app.listen(PORT, async () => {
   const cartSubscriptionOptions: SubscribeToStreamOptions = {
     fromRevision: "start",
   };
+  if (cartSubscriptionOptions.fromRevision === "start") {
+    // To avoid side effects of restarting the application, we delete all carts from the database if we start from the beginning.
+    await storageClient.deleteAll("carts");
+  }
   client.subscribe(
     "$ce-cart",
     async (_id, _revision, event, streamId) => {

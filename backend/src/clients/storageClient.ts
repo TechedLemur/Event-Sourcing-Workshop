@@ -75,6 +75,11 @@ class StorageClient {
     return result;
   }
 
+  async deleteAll(collectionName: CollectionName): Promise<void> {
+    const collection = this.mongoClient.db().collection(collectionName);
+    await collection.deleteMany({});
+  }
+
   mongoClient: MongoClient;
 }
 
