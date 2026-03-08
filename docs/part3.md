@@ -53,9 +53,9 @@ Du kan oppleve at du må refreshe frontend for å se nye produkter som legges ti
 
 ## Bonusoppgave - Checkpoints
 
-Slike oppsettet er nå, starter `subscriptions` fra starten av streamen hver gang vi starter applikasjonen på nytt. Etter hver som det blir et par millioner eventer vil dette ta lang tid, og vi øsnker ikke at systemet skal slutte å oppdatere seg over lengre tid bare fordi en applikasjon måtte restartes.
+Slik oppsettet er nå, starter `subscriptions` fra starten av streamen hver gang vi starter applikasjonen på nytt. Etter hver som det blir et par millioner eventer vil dette ta lang tid, og vi øsnker ikke at systemet skal slutte å oppdatere seg over lengre tid bare fordi en applikasjon måtte restartes.
 
-For å unngå å starte på nytt hver gang, kan vil lagre `checkpoints` i databasen etter hvert som vil leser eventer. Når vi starter applikasjonen på nytt, kan vi lese ut siste `checkpoint` og starte `subscriptions` fra der.
+For å unngå å starte på nytt hver gang, kan vi lagre `checkpoints` i databasen etter hvert som vi leser eventer. Når vi starter applikasjonen på nytt, kan vi lese ut siste `checkpoint` og starte `subscriptions` fra der.
 
 I kurrentDb bruker vi `revision` som checkpoint. For å velge startpunktet for `subscriptions` kan vi bruke `fromRevision` parameter i `SubscribeToStreamOptions` som er satt opp i [index.ts](../backend/src/index.ts). Dette må være en BigInt, så bruk `BigInt(n)` for å deklarere en BigInt av tallet `n`.
 
