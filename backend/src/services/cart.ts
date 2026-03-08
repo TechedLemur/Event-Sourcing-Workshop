@@ -25,7 +25,7 @@ export async function addItemToCart(
   const streamName = getStreamName(cartId);
   // Get the product based on the productId
   // TASK: Get the product based on the productId instead of this undefined. Maybe there is a function in products.ts that can help us?
-  const product: Product | undefined = undefined;
+  const product: Product | undefined = await getProduct(client, productId);
 
   if (!product) {
     throw new Error(`Product not found with id: ${productId}`);
@@ -43,6 +43,13 @@ export async function addItemToStream(
   const events: StoreEventTypes[] = [
     // TASK: Add the ProductAddedToCart event
     // ...
+    {
+      type: CartEventTypes.ProductAddedToCart,
+      subject: crypto.randomUUID(),
+      productId: product.id,
+      productName: product.name,
+      productPrice: product.price,
+    },
   ];
 
   console.info(`Events: ${JSON.stringify(events)}`);
@@ -62,6 +69,10 @@ export async function removeItemFromCart(
   const events: StoreEventTypes[] = [
     // TASK: Add the ProductRemovedFromCart event
     // ...
+    {
+      type: CartEventTypes.ProductRemovedFromCart,
+      subject: itemId,
+    },
   ];
 
   console.info(`Events: ${JSON.stringify(events)}`);
