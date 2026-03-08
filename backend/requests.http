@@ -1,0 +1,65 @@
+@baseUrl = http://localhost:3002
+
+### Example - Create an event
+POST {{baseUrl}}/example
+
+### Example - Get events
+GET {{baseUrl}}/example
+
+
+### Products
+GET {{baseUrl}}/products
+
+### Product by ID
+GET {{baseUrl}}/products/1
+
+### Update product price
+PATCH {{baseUrl}}/products/1/price
+Content-Type: application/json
+
+{
+  "price": 108.00,
+  "currency": "USD"
+}
+
+### Delete product
+DELETE {{baseUrl}}/products/8
+
+### Cart
+GET {{baseUrl}}/cart
+
+### Add item to cart
+POST {{baseUrl}}/cart/123/addItem
+Content-Type: application/json
+
+{
+  "productId": "5"
+}
+
+### Remove item from cart
+DELETE {{baseUrl}}/cart/123/removeItem/643df099-862e-4e0e-8744-649f89339f15
+
+
+### Get cart by ID
+GET {{baseUrl}}/cart/1236
+
+
+### Get cart by ID with max count
+GET {{baseUrl}}/cart/positioned/123?maxCount=3
+
+### Get last event revision
+GET {{baseUrl}}/cart/123/lastEventRevision
+
+
+
+### Products V2
+GET {{baseUrl}}/products/v2
+
+### Product by ID V2
+GET {{baseUrl}}/products/v2/1
+
+### Cart V2
+
+### Cart by ID V2
+GET {{baseUrl}}/cart/v2/123
+
