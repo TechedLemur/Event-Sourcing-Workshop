@@ -43,12 +43,22 @@ export async function addItemToStream(
   const events: StoreEventTypes[] = [
     // TASK: Add the ProductAddedToCart event
     // ...
+    // {
+    //   type: CartEventTypes.ProductAddedToCart,
+    //   subject: crypto.randomUUID(),
+    //   productId: product.id,
+    //   productName: product.name,
+    //   productPrice: product.price,
+    // },
     {
-      type: CartEventTypes.ProductAddedToCart,
+      type: CartEventTypes.ProductAddedToCartV2,
       subject: crypto.randomUUID(),
       productId: product.id,
       productName: product.name,
-      productPrice: product.price,
+      productPrice: {
+        amount: product.price,
+        currency: product.currency,
+      },
     },
   ];
 
@@ -92,6 +102,15 @@ export function updateCart(cart: Cart, event: StoreEventTypes) {
         productId: event.productId,
         productName: event.productName,
         productPrice: event.productPrice,
+      });
+      break;
+    case CartEventTypes.ProductAddedToCartV2:
+      cart.items.push({
+        id: event.subject,
+        productId: event.productId,
+        productName: event.productName,
+        productPrice: event.productPrice.amount,
+        productCurrency: event.productPrice.currency,
       });
       break;
     case CartEventTypes.ProductRemovedFromCart:
