@@ -4,7 +4,7 @@ Før du begynner på denne oppgaven, trykk på "Shop V2" i frontend navbar.
 
 I denne delen skal vi implementere en projector (også kalt denormalizer) for å bygge tilstanden til handlekurven, og lagre denne i en database. Fordelen med denne tilnærmingen er at når vi gjør `getCart` kan vi lese ut tilstanden til handlekurven fra databasen direkte, uten å måtte lese ut hele cart-streamen fra eventstore for hver eneste request. Etter hvert som antall eventer i streamen vokser, vil det gå tregere og tregere å lese gjennom eventene.
 
-Databasen vil kontinuerlig bli oppdatert med nye eventer som kommer inn i eventstore gjennom en `subscription`. Vi har allerede satt opp subscriptions i [index.ts](../backend/src/index.ts) (linje 49), så du trenger ikke å gjøre dette oppsettet selv.
+Databasen vil kontinuerlig bli oppdatert med nye eventer som kommer inn i eventstore gjennom en `subscription`. Vi har allerede satt opp subscriptions i [index.ts](../backend/src/index.ts), så du trenger ikke å gjøre dette oppsettet selv.
 
 Det er laget en [ProductServiceV2](../backend/src/services/productsV2.ts) som lagrer produkter i databasen, denne kan være nyttig å se på for inspirasjon.
 
