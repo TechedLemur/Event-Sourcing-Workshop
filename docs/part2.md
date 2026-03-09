@@ -31,3 +31,86 @@ Din oppgave er å implementere funksjonen `readCartStream` i [CartService](../ba
 For å lese ut de første X eventene må du bruke en gitt parameter i `readStream`-funksjonen. Se [EventStore API](https://docs.kurrent.io/clients/node/v1.1/reading-events.html#maxcount-1) for mer informasjon.
 
 Workshoppen fortsetter i [Del 3](part3.md).
+
+
+## Ordre oppgave 2 - Nye ordrer
+
+I grensesnittet har vi en fane som heter Admin. Dette er et eksempel på et administrasjonsgrensesnitt og viser litt diverse informasjon vi er interessert i. I denne oppgaven skal vi se nærmere på å hente ut nylige ordrer.
+
+Acceptence criteria:
+
+- `GET /orders?limit=X` skal returnere de nyeste X ordrene sortert fra nyest til eldst. Se [OrderRoutes](../backend/src/routes/order.ts)
+- De nyeste ordrene skal dukke opp på "Recent Orders" i admin grensesnittet
+
+Reponsen skal ligne på denne:
+
+```json
+[
+    {
+        "orderId": "SomeID",
+        "totalAmount": 19.99,
+        "createdAt": "2023-11-03T12:34:56.789Z",
+        "items": [
+            {
+                "productName": "Kaffi",
+            },
+            {
+                "productName": "Bolle",
+            }
+        ]
+    }
+]
+```
+
+## Ordre oppgave 3 - Populære produkter
+
+I samme grensesnittet nye ordrer finner vi "Popular Items". I denne oppgaven skal du hente ut de X mest populære produktene sortert fra mest populær til minst populær.
+
+Acceptence criteria:
+
+- `GET /orders/popular?limit=X` skal returnere de nyeste X produktene sortert fra mest populær til minst populær.
+- De mest populære produktene skal dukke opp i admin grensesnittet
+
+Responsen skal ligne på denne:
+
+```json
+[
+    {
+        "productName": "Kaffi",
+        "totalQuantity": 1
+    },
+    {
+        "productName": "Bolle",
+        "totalQuantity": 1
+    }
+]
+```
+
+## Ordre oppgave 4 - Orders over time graf
+
+Den siste oversikten i admin grensesnittet er ordre over tid. Her ønsker vi å kunne se flyten av ordrer. Vi ønsker at denne grafen returnerer datapunkter for hvert 15. minutt og hvor mange ordrer som ble produsert i det tidsrommet. Om der ikke er noen orderer trenger du ikke returnere et datapunkt.
+
+Acceptence criteria:
+
+- `GET /orders/graph` skal returnere en liste med datapuntker. Hvert datapunkt inneholder et tidspunkt og et antall ordre for det tidspunktet.
+- En graf skal vise i admin grensesnittet
+
+Responsen skal ligne på denne:
+
+```json
+{
+    "points":
+    [
+        {
+            "timestamp": "2023-11-03T12:34:00.000Z",
+            "orderCount": 2
+        },
+        {
+            "timestamp": "2023-11-03T12:35:00.000Z",
+            "orderCount": 1
+        }
+    ]
+}
+```
+
+Workshoppen fortsetter i [Del 3](part3.md).
