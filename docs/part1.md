@@ -50,3 +50,24 @@ Siden `getCart` ikke er implementert enda, kan du ikke bruke frontend for å tes
 Hint: Bruk `subject`-feltet i eventen for itemId. Denne skal være unik for hver instans av et produkt i handlekurven. Hvis du ikke gjorde dette i oppgave 1, bør du vurdere å ta en kikk tilbake på `addItemToCart` for å sette en fornuftig `subject`-verdi.
 
 Workshoppen fortsetter i [Del 2](part2.md).
+
+## Ordre
+
+Gjennom workshoppen vil det gå et parallelt løp med helt valgfrie oppgaver som innebærer å produsere et ordreløp. Tanken bak disse oppgavene er at du skal selv måtte ta valg som omhandler event sourcing of føle litt på hva som funker og hva som ikke funker. Disse oppgavene vil ikke få svarene utdelt i hver del, så om du ikke får til en oppgave så kan du ikke alltid gå videre til neste del. Fokuser på å fullføre oppgavene som er del av workshop og se på disse oppgavene om du blir raskt ferdig og ønsker se mer på event sourcing.
+
+## Ordre oppgave 1 - Lage ordre eventer
+
+I denne oppgaven skal du lage helt egne eventer for ordre basert på det som blir bestilt fra en handlekurv. I butikken så kan en bruker klikke "Checkout", dette vil kalle endepunktet `POST /order/checkout/:cartId`. Vi har laget selve endepunktet i [OrderRoute](../backend/src/routes/order.ts). Du skal implementere denne routen slik at en ordre blir produsert til EventStore.
+
+Når du lager ordre eventen, tenk gjerne gjennom hvor det gir mening at informasjonen lever mtp. business caset. E.g gir det mening å kopiere produkt navnet eller burde dette leve i ordren?
+
+Acceptance criteria:
+
+- `POST /orders/checkout/:cartId` skal opprette en ny ordre
+- En event relatert til ordre skal dukke opp i dashboardet i eventstore
+
+Optional criteria:
+
+- Tømme handlekurven når en ordre blir opprettet
+
+Workshoppen fortsetter i [Del 2](part2.md).
