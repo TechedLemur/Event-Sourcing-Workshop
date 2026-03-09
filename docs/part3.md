@@ -67,3 +67,23 @@ Acceptance criteria:
 Her står du ganske fritt til hvordan du implementerer denne funksjonaliteten. Vi har satt opp `checkpoints` som en collection i databasen, så du kan bruke denne for å lagre og lese ut `checkpoints`. Her er det lov å bruke AI hvis man sitter fast.
 
 Workshoppen fortsetter i [Del 4](part4.md).
+
+## Ordre oppgave 5 - Order projectors
+
+I denne oppgaven skal vi forbedre løsningen fra [ordre oppgave 2-4](task2.md) ved å lage en projectorer som produserer en read model i mongodb. Vi ønsker at denne read modellen skal hentes direte i api-et.
+
+Tips: Det er potensielt enklere å lage flere projectors :)
+
+NB: Du kan måtte gjøre endringer på [storageClient](../backend/src/clients/storageClient.ts).
+
+Acceptance criteria:
+
+- Endepunktene skal fungere som før refaktoreringen
+- Det skal ikke trenge å gå noe trafikk til EventStore ved forespørsel fra api-et
+
+Optional criteria:
+
+- Lage checkpoints slik at applikasjonen ikke trenger spole gjennom alle eventene hver oppstart
+
+
+Workshoppen fortsetter i [Del 4](part4.md).
