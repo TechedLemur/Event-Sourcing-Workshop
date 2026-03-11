@@ -94,7 +94,12 @@ export function updateCart(cart: Cart, event: StoreEventTypes) {
       console.warn(`Unexpected event type: ${event.type}`);
       break;
   }
-  cart.total = 0; // TASK: Calculate the total price of the cart
+  let total = 0;
+
+  // TASK: Calculate the total price of the cart
+  // total = ...
+
+  cart.total = total;
   return cart;
 }
 
@@ -133,9 +138,10 @@ async function readCartStream(
     return getEmptyCart(cartId);
   }
   const streamName = getStreamName(cartId);
-  // https://docs.kurrent.io/clients/node/v1.1/reading-events.html#maxcount-1
+  // https://docs.kurrent.io/clients/node/v1.1/reading-events.html#maxcount
   const events = client.read(streamName, {
     // TASK: Set the correct parameter here
+    // ...
   });
   const cart = getEmptyCart(cartId);
 
