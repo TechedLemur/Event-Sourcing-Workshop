@@ -22,10 +22,13 @@ export async function addItemToCartV2(
   productId: string
 ): Promise<void> {
   const streamName = getStreamName(cartId);
-  // Get the product based on the productId
-  // TASK: Get the product based on the productId instead of this undefined.
+  let product: Product | undefined;
+
+  // TASK: Get the product based on the productId.
   // Do not use the same function as in carts.ts, look in productsV2.ts for a function that can help us.
-  const product: Product | undefined = undefined;
+
+  // product = ...
+
   if (!product) {
     throw new Error(`Product not found with id: ${productId}`);
   }
@@ -43,8 +46,10 @@ export async function handleCartEvent(
 
   const cartId = getCartIdFromStreamName(streamName);
 
-  // Get the cart from the database, or create a new one if it doesn't exist
-  const cart: Cart = getEmptyCart(cartId); // TASK: Get the cart from the database here or create a new one if it doesn't exist
+  let cart: Cart = getEmptyCart(cartId);
+
+  // TASK: Get the cart from the database here or use an empty cart if it doesn't exist in the database
+  // cart = ...
 
   // TASK: Update the cart based on the event
   // Maybe we already have a function for this in services/cart.ts?
@@ -59,7 +64,10 @@ export async function getCartV2(
   db: StorageClient,
   cartId: string
 ): Promise<Cart> {
-  const cart: Cart | undefined = undefined; // TASK: Get the cart from the database
+  let cart: Cart | undefined;
+  // TASK: Get the cart from the database
+  // cart = ...
+
   if (!cart) {
     return getEmptyCart(cartId);
   }
