@@ -29,32 +29,16 @@ MONGO_DB_CONNECTION_STRING=mongodb://localhost:27017
 
 ```
 
-### Starting backend
-
-```bash
-cd backend
-npm install
-npm run dev
-```
-
 ### Eventstore DB / external services
 
 ```bash
 docker compose up -d
 ```
 
-This will start the eventstore, mongoDB and the frontend. If you rather want to run the frontend in development mode, you can first run:
+### Starting backend
 
 ```bash
-docker compose up -d kurrentdb.db mongodb
-```
-
-Then follow the instructions below
-
-### Starting frontend in development mode
-
-```bash
-cd frontend
+cd backend
 npm install
 npm run dev
 ```
