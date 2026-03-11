@@ -16,19 +16,6 @@ This is a workshop on Event Sourcing. We will be using KurrentDB as the event st
 
 If using VS Code / Cursor, we recommend installing the extensions listed in [.vscode/extensions.json](.vscode/extensions.json). It should be a popup when opening the project in VS Code / Cursor.
 
-### Create a .env file
-
-(there should already be one in the root of the project, but if not, create one with the following content)
-
-```bash
-BACKEND_PORT=3002
-API_URL=http://localhost:$BACKEND_PORT
-CE_USE_BIG_INT=true
-EVENT_STORE_CONNECTION_STRING=kurrentdb://localhost:2113?tls=false
-MONGO_DB_CONNECTION_STRING=mongodb://localhost:27017
-
-```
-
 ### Eventstore DB / external services
 
 ```bash
