@@ -51,26 +51,32 @@ Her er det bare 1 linje med kode som trenger å endres.
 
 Du kan oppleve at du må refreshe frontend for å se nye produkter som legges til i handlekurven. Kan du tenke deg hvorfor dette skjer? Kan du komme på noen forslag til hvordan vi kan unngå dette problemet?
 
+Workshoppen fortsetter i [Del 4](part4.md).
+
+---
+
 ## Bonusoppgave - Checkpoints
 
-Slik oppsettet er nå, starter `subscriptions` fra starten av streamen hver gang vi starter applikasjonen på nytt. Etter hver som det blir et par millioner eventer vil dette ta lang tid, og vi øsnker ikke at systemet skal slutte å oppdatere seg over lengre tid bare fordi en applikasjon måtte restartes.
+Slik oppsettet er nå, starter `subscriptions` fra starten av streamen hver gang vi starter applikasjonen på nytt. Etter hver som det blir et par millioner eventer vil dette ta lang tid, og vi ønsker ikke at systemet skal slutte å oppdatere seg over lengre tid bare fordi en applikasjon måtte restartes.
 
 For å unngå å starte på nytt hver gang, kan vi lagre `checkpoints` i databasen etter hvert som vi leser eventer. Når vi starter applikasjonen på nytt, kan vi lese ut siste `checkpoint` og starte `subscriptions` fra der.
 
-I kurrentDb bruker vi `revision` som checkpoint. For å velge startpunktet for `subscriptions` kan vi bruke `fromRevision` parameter i `SubscribeToStreamOptions` som er satt opp i [index.ts](../backend/src/index.ts). Dette må være en BigInt, så bruk `BigInt(n)` for å deklarere en BigInt av tallet `n`.
+I kurrentDb bruker vi `revision` som checkpoint. For å velge startpunktet for `subscriptions` kan vi bruke `fromRevision` parameter i `SubscribeToStreamOptions` som er satt opp i [index.ts](../backend/src/index.ts).
 
 Acceptance criteria:
 
 - `checkpoints` skal lagres i databasen etter hvert som vi leser eventer.
 - `checkpoints` skal leses ut fra databasen når vi starter applikasjonen på nytt, og sette `fromRevision` parameter i `SubscribeToStreamOptions` til dette.
 
-Her står du ganske fritt til hvordan du implementerer denne funksjonaliteten. Vi har satt opp `checkpoints` som en collection i databasen, så du kan bruke denne for å lagre og lese ut `checkpoints`. Her er det lov å bruke AI hvis man sitter fast.
+Her står du ganske fritt til hvordan du implementerer denne funksjonaliteten. Vi har satt opp `checkpoints` som en collection i databasen, så du kan bruke denne for å lagre og lese ut `checkpoints`. Her er det lov å bruke AI hvis man sitter fast. Du kan bruke typen `Checkpoint` som er definert i [types.ts](../backend/src/types.ts) for å lagre og lese ut `checkpoints`, eller du kan lage en egen type.
 
-Workshoppen fortsetter i [Del 4](part4.md).
+---
 
-## Ordre oppgave 5 - Order projectors
+## Ordre
 
-I denne oppgaven skal vi forbedre løsningen fra [ordre oppgave 2-4](task2.md) ved å lage en projectorer som produserer en read model i mongodb. Vi ønsker at denne read modellen skal hentes direte i api-et.
+### Ordre oppgave 5 - Order projectors
+
+I denne oppgaven skal vi forbedre løsningen fra [ordre oppgave 2-4](task2.md) ved å lage en projector som produserer en read model i mongodb. Vi ønsker at denne read modellen skal hentes direkte i api-et.
 
 Tips: Det er potensielt enklere å lage flere projectors :)
 
@@ -84,6 +90,5 @@ Acceptance criteria:
 Optional criteria:
 
 - Lage checkpoints slik at applikasjonen ikke trenger spole gjennom alle eventene hver oppstart
-
 
 Workshoppen fortsetter i [Del 4](part4.md).
