@@ -27,12 +27,14 @@ Acceptance criteria:
 - `POST /cart/:id/addItem` skal legge til et produkt i en `cart-<id>` stream.
 - `ProductAddedToCart` event skal dukke opp i dashboardet i eventstore.
 
-Din oppgave er å implementere funksjonene `addItemToCart` og `addItemToStream` i [CartService](../backend/src/services/cart.ts). Gjerne se på `createProduct` i [ProductService](../backend/src/services/products.ts) for inspirasjon.
+Din oppgave er å implementere funksjonene `addItemToCart` og `addItemToCartStream` i [CartService](../backend/src/services/cart.ts). Gjerne se på `createProduct` i [ProductService](../backend/src/services/products.ts) for inspirasjon.
 Du skal i utgangspunktet bare trenge å legge til kode i blokkene der det står en `// TASK: ...` kommentar.
 
 For å kalle endepunktet for å legge til produkt kan du klikke på "Add to Cart" på et produkt i frontenden. Du vil ikke se noen endringer i frontenden (denne oppgaven kommer snart), men du kan se at eventen er lagt til i eventstore.
 
-Hint: `type` til eventen skal være `CartEventTypes.ProductAddedToCart`. Hvis du lager et objekt med `{ type: CartEventTypes.ProductAddedToCart, ... }` i `events`-array i `addItemToStream`, så skal typescript sine feilmeldinger gi deg informasjon om hva mer som mangler.
+Hint: `type` til eventen skal være `CartEventTypes.ProductAddedToCart`. Hvis du lager et objekt med `{ type: CartEventTypes.ProductAddedToCart, ... }` i `events`-array i `addItemToCartStream`, så skal typescript sine feilmeldinger gi deg informasjon om hva mer som mangler.
+
+Hint: `subject`-feltet i eventen kan settes til `cartId`.
 
 ## Oppgave 2 - Slett produkt fra handlekurven
 
@@ -46,8 +48,6 @@ Acceptance criteria:
 Din oppgave er å implementere funksjonen `removeItemFromCart` i [CartService](../backend/src/services/cart.ts).
 
 Siden `getCart` ikke er implementert enda, kan du ikke bruke frontend for å teste funksjonen. Du kan kjøre http-requests i [requests.http](../backend/requests.http) i stedet. For å kalle riktig endepunkt må du ha både `cartId` og `itemId` som parametre. Du kan finne disse ved å se i EventStore dashboardet for en cart-stream og undersøke `ProductAddedToCart` eventen.
-
-Hint: Bruk `subject`-feltet i eventen for itemId. Denne skal være unik for hver instans av et produkt i handlekurven. Hvis du ikke gjorde dette i oppgave 1, bør du vurdere å ta en kikk tilbake på `addItemToCart` for å sette en fornuftig `subject`-verdi.
 
 Workshoppen fortsetter i [Del 2](part2.md).
 
