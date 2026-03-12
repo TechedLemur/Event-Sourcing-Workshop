@@ -4,7 +4,7 @@ import EventClient from "../clients/eventClient";
 import { CartEventTypes, StoreEventTypes } from "../events";
 import StorageClient from "../clients/storageClient";
 import {
-  addItemToStream,
+  addItemToCartStream,
   getEmptyCart,
   getStreamName,
   updateCart,
@@ -32,7 +32,7 @@ export async function addItemToCartV2(
   if (!product) {
     throw new Error(`Product not found with id: ${productId}`);
   }
-  await addItemToStream(client, streamName, product);
+  await addItemToCartStream(client, streamName, product);
 }
 
 // Part 3
