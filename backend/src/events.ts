@@ -19,12 +19,15 @@ export const enum CartEventTypes {
 
 type ProductRemovedFromCartEvent = EventPayload<
   CartEventTypes.ProductRemovedFromCart,
-  {}
+  {
+    itemId: string;
+  }
 >;
 
 type ProductAddedToCartEvent = EventPayload<
   CartEventTypes.ProductAddedToCart,
   {
+    itemId: string;
     productId: string;
     productName: string;
     productPrice: number;
@@ -34,6 +37,7 @@ type ProductAddedToCartEvent = EventPayload<
 type ProductAddedToCartEventV2 = EventPayload<
   CartEventTypes.ProductAddedToCartV2,
   {
+    itemId: string;
     productId: string;
     productName: string;
     productPrice: PriceWithCurrency;
