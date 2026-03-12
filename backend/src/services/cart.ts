@@ -22,7 +22,6 @@ export async function addItemToCart(
   cartId: string,
   productId: string
 ): Promise<void> {
-  const streamName = getStreamName(cartId);
   // Get the product based on the productId
   let product: Product | undefined;
   // TASK: Get the product based on the productId instead of this undefined. Maybe there is a function in products.ts that can help us?
@@ -32,21 +31,26 @@ export async function addItemToCart(
     throw new Error(`Product not found with id: ${productId}`);
   }
 
-  await addItemToStream(client, streamName, product);
+  await addItemToCartStream(client, cartId, product);
 }
 
 // Part 1
-export async function addItemToStream(
+export async function addItemToCartStream(
   client: EventClient,
-  streamName: string,
+  cartId: string,
   product: Product
 ): Promise<void> {
+  // Generate a unique itemId for the item line
+  const itemId = crypto.randomUUID();
+
   const events: StoreEventTypes[] = [
     // TASK: Add the ProductAddedToCart event
     // ...
   ];
 
   console.info(`Events: ${JSON.stringify(events)}`);
+
+  const streamName = getStreamName(cartId);
 
   await client.emit(streamName, events);
   console.info(`Events appended to stream: ${streamName}`);

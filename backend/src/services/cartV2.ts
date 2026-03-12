@@ -4,7 +4,7 @@ import EventClient from "../clients/eventClient";
 import { CartEventTypes, StoreEventTypes } from "../events";
 import StorageClient from "../clients/storageClient";
 import {
-  addItemToStream,
+  addItemToCartStream,
   getEmptyCart,
   getStreamName,
   updateCart,
@@ -21,7 +21,6 @@ export async function addItemToCartV2(
   cartId: string,
   productId: string
 ): Promise<void> {
-  const streamName = getStreamName(cartId);
   let product: Product | undefined;
 
   // TASK: Get the product based on the productId.
@@ -32,7 +31,7 @@ export async function addItemToCartV2(
   if (!product) {
     throw new Error(`Product not found with id: ${productId}`);
   }
-  await addItemToStream(client, streamName, product);
+  await addItemToCartStream(client, cartId, product);
 }
 
 // Part 3
