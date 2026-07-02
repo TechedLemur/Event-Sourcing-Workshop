@@ -1,51 +1,51 @@
-# Del 2
+# Part 2
 
-I denne delen skal vi implementere funksjonaliteten for å lese ut tilstanden til handlekurven fra EventStore.
-Vi skal også se på et av de nyttigste elementene i Event Sourcing; å lage et snapshot av tilstanden på et vilkårlig tidspunkt.
+In this part, we will implement the functionality for reading the state of the cart from EventStore.
+We will also look at one of the most useful parts of event sourcing: creating a snapshot of the state at an arbitrary point in time.
 
-## Oppgave 1 - Lese ut tilstanden til handlekurven
+## Task 1 - Read the Cart State
 
-Vi skal nå implementere funksjonen `getCart` i [CartService](../backend/src/services/cart.ts).
-
-Acceptance criteria:
-
-- `GET /cart/:id` skal lese ut tilstanden til handlekurven fra EventStore.
-- Handlekurven i Frontend skal vise nye produkter som legges til i handlekurven.
-- Når man trykker på Trash-ikonet, skal produktet fjernes fra handlekurven i UI.
-
-Din oppgave er å implementere funksjonen `updateCart` i [CartService](../backend/src/services/cart.ts) som brukes av `getCart`.
-
-Du må finne ut hvilke eventer som er relevante for å oppdatere handlekurven og implementere logikken for å oppdatere handlekurven basert på disse eventene.
-
-## Oppgave 2 - Tidsreiser
-
-Vi skal nå se på magien i Event Sourcing; å kunne gå tilbake i tid og se hva som skjedde på et tidspunkt i fortiden.
+We will now implement the `getCart` function in [CartService](../backend/src/services/cart.ts).
 
 Acceptance criteria:
 
-- `GET /cart/positioned/:id?maxCount=X` skal lese ut tilstanden til handlekurven fra EventStore, men bare lese de første X eventene.
-- Time Travel Slider i frontend skal fungere. For å aktivere denne må du trykke på "Time Travel" i menyen på toppen av siden.
+- `GET /cart/:id` should read the cart state from EventStore.
+- The cart in the frontend should show new products that are added to the cart.
+- When the Trash icon is clicked, the product should be removed from the cart in the UI.
 
-Din oppgave er å implementere funksjonen `readCartStream` i [CartService](../backend/src/services/cart.ts) som brukes av `getCartPositioned`. Som du kanskje ser vil `getCartPositioned` gjøre nøyaktig det samme som `getCart`, men bare lese de første X eventene. For å rydde opp kan du forenkle `getCart` slik at den bare kaller `readCartStream` uten en maxCount parameter.
+Your task is to implement the `updateCart` function in [CartService](../backend/src/services/cart.ts), which is used by `getCart`.
 
-For å lese ut de første X eventene må du bruke en gitt parameter i `readStream`-funksjonen. Se [EventStore API](https://docs.kurrent.io/clients/node/v1.1/reading-events.html#maxcount) for mer informasjon.
+You need to figure out which events are relevant for updating the cart and implement the logic for updating the cart based on those events.
 
-Workshoppen fortsetter i [Del 3](part3.md).
+## Task 2 - Time Travel
+
+We will now look at the magic of event sourcing: being able to go back in time and see what happened at a point in the past.
+
+Acceptance criteria:
+
+- `GET /cart/positioned/:id?maxCount=X` should read the cart state from EventStore, but only read the first X events.
+- The Time Travel Slider in the frontend should work. To activate it, click "Time Travel" in the menu at the top of the page.
+
+Your task is to implement the `readCartStream` function in [CartService](../backend/src/services/cart.ts), which is used by `getCartPositioned`. As you may notice, `getCartPositioned` does exactly the same thing as `getCart`, except it only reads the first X events. To clean this up, you can simplify `getCart` so that it only calls `readCartStream` without a maxCount parameter.
+
+To read the first X events, you need to use a given parameter in the `readStream` function. See the [EventStore API](https://docs.kurrent.io/clients/node/v1.1/reading-events.html#maxcount) for more information.
+
+The workshop continues in [Part 3](part3.md).
 
 ---
 
-## Ordre
+## Orders
 
-### Ordre oppgave 2 - Nye ordrer
+### Order Task 2 - New Orders
 
-I grensesnittet har vi en fane som heter Admin. Dette er et eksempel på et administrasjonsgrensesnitt og viser litt diverse informasjon vi er interessert i. I denne oppgaven skal vi se nærmere på å hente ut nylige ordrer.
+The interface has a tab called Admin. This is an example of an administration interface and shows various information we are interested in. In this task, we will look more closely at fetching recent orders.
 
 Acceptance criteria:
 
-- `GET /orders?limit=X` skal returnere de nyeste X ordrene sortert fra nyest til eldst. Se [OrderRoutes](../backend/src/routes/order.ts)
-- De nyeste ordrene skal dukke opp på "Recent Orders" i admin grensesnittet
+- `GET /orders?limit=X` should return the latest X orders sorted from newest to oldest. See [OrderRoutes](../backend/src/routes/order.ts).
+- The latest orders should appear under "Recent Orders" in the admin interface.
 
-Reponsen skal ligne på denne:
+The response should look like this:
 
 ```json
 [
@@ -65,16 +65,16 @@ Reponsen skal ligne på denne:
 ]
 ```
 
-### Ordre oppgave 3 - Populære produkter
+### Order Task 3 - Popular Products
 
-I samme grensesnittet finner vi også "Popular Items". I denne oppgaven skal du hente ut de X mest populære produktene sortert fra mest populær til minst populær.
+In the same interface, we also find "Popular Items". In this task, you will fetch the X most popular products sorted from most popular to least popular.
 
 Acceptance criteria:
 
-- `GET /orders/popular?limit=X` skal returnere de nyeste X produktene sortert fra mest populær til minst populær.
-- De mest populære produktene skal dukke opp i admin grensesnittet
+- `GET /orders/popular?limit=X` should return the top X products sorted from most popular to least popular.
+- The most popular products should appear in the admin interface.
 
-Responsen skal ligne på denne:
+The response should look like this:
 
 ```json
 [
@@ -89,16 +89,16 @@ Responsen skal ligne på denne:
 ]
 ```
 
-### Ordre oppgave 4 - Orders over time graf
+### Order Task 4 - Orders Over Time Graph
 
-Den siste oversikten i admin grensesnittet er ordre over tid. Her ønsker vi å kunne se flyten av ordrer. Vi ønsker at denne grafen returnerer datapunkter for hvert 15. minutt og hvor mange ordrer som ble produsert i det tidsrommet. Om der ikke er noen orderer trenger du ikke returnere et datapunkt.
+The last overview in the admin interface is orders over time. Here, we want to see the flow of orders. We want this graph to return data points for every 15 minutes and show how many orders were produced during that time period. If there are no orders, you do not need to return a data point.
 
 Acceptance criteria:
 
-- `GET /orders/graph` skal returnere en liste med datapunkter. Hvert datapunkt inneholder et tidspunkt og et antall ordre for det tidspunktet.
-- En graf skal vise i admin grensesnittet
+- `GET /orders/graph` should return a list of data points. Each data point contains a timestamp and an order count for that timestamp.
+- A graph should be shown in the admin interface.
 
-Responsen skal ligne på denne:
+The response should look like this:
 
 ```json
 {
@@ -115,4 +115,4 @@ Responsen skal ligne på denne:
 }
 ```
 
-Workshoppen fortsetter i [Del 3](part3.md).
+The workshop continues in [Part 3](part3.md).

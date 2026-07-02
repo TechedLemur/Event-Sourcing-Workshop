@@ -1,75 +1,75 @@
-# Del 1
+# Part 1
 
-I denne første delen skal vi sette opp prosjektet og lage våre første eventer.
+In this first part, we will set up the project and create our first events.
 
-## Oppsett
+## Setup
 
-Følg instruksene i [README.md](../README.md) for å sette opp prosjektet. Hvis du har gjort alt riktig skal du nå ha en backend som kjører på [http://localhost:3002](http://localhost:3002), en frontend som kjører på [http://localhost:3000](http://localhost:3000) og noen docker-containere som kjører eventstore og mongoDB.
+Follow the instructions in [README.md](../README.md) to set up the project. If everything is working correctly, you should now have a backend running at [http://localhost:3002](http://localhost:3002), a frontend running at [http://localhost:3000](http://localhost:3000), and some Docker containers running EventStore and MongoDB.
 
-Gå til [http://localhost:2113/web/index.html#/dashboard](http://localhost:2113/web/index.html#/dashboard) for å se at eventstore kjører korrekt.
+Go to [http://localhost:2113/web/index.html#/dashboard](http://localhost:2113/web/index.html#/dashboard) to verify that EventStore is running correctly.
 
-## Oppgave 0 - Hello Event
+## Task 0 - Hello Event
 
-Først skal vi teste at backenden vår fungerer og kan kommunisere med EventStore.
+First, we will test that our backend works and can communicate with EventStore.
 
-I [requests.http](../backend/requests.http) finner du en liste med http-requests som du kan bruke til å teste backenden. Disse kan enkelt kjøres med [REST Client](https://marketplace.visualstudio.com/items?itemName=humao.rest-client) i VS Code. Eventuelt bruk Curl, Postman eller et annet verktøy om du vil.
+In [requests.http](../backend/requests.http), you will find a list of HTTP requests that you can use to test the backend. These can be run easily with [REST Client](https://marketplace.visualstudio.com/items?itemName=humao.rest-client) in VS Code. Alternatively, use Curl, Postman, or another tool if you prefer.
 
-1. Kjør `POST {{baseUrl}}/example` for å lage en eksempel-event.
-2. Gå til [http://localhost:2113/web/index.html#/streams](http://localhost:2113/web/index.html#/streams) for å se at eventen er lagt til i eventstore. Det skal nå være en stream med navnet `hello-event-stream` som vi kan trykke på for å se eventene.
-3. Kjør `GET {{baseUrl}}/example` for å sjekke at vi kan lese eventen fra eventstore.
+1. Run `POST {{baseUrl}}/example` to create an example event.
+2. Go to [http://localhost:2113/web/index.html#/streams](http://localhost:2113/web/index.html#/streams) to verify that the event has been added to EventStore. There should now be a stream named `hello-event-stream` that we can click to view the events.
+3. Run `GET {{baseUrl}}/example` to check that we can read the event from EventStore.
 
-## Oppgave 1 - Legg produkt i handlekurven
+## Task 1 - Add Product to Cart
 
-Vi skal nå starte på funksjonaliteten for å legge produkter i handlekurven.
-
-Acceptance criteria:
-
-- `POST /cart/:id/addItem` skal legge til et produkt i en `cart-<id>` stream.
-- `ProductAddedToCart` event skal dukke opp i dashboardet i eventstore.
-
-Din oppgave er å implementere funksjonene `addItemToCart` og `addItemToStream` i [CartService](../backend/src/services/cart.ts). Gjerne se på `createProduct` i [ProductService](../backend/src/services/products.ts) for inspirasjon.
-Du skal i utgangspunktet bare trenge å legge til kode i blokkene der det står en `// TASK: ...` kommentar.
-
-For å kalle endepunktet for å legge til produkt kan du klikke på "Add to Cart" på et produkt i frontenden. Du vil ikke se noen endringer i frontenden (denne oppgaven kommer snart), men du kan se at eventen er lagt til i eventstore.
-
-Hint: `type` til eventen skal være `CartEventTypes.ProductAddedToCart`. Hvis du lager et objekt med `{ type: CartEventTypes.ProductAddedToCart, ... }` i `events`-array i `addItemToStream`, så skal typescript sine feilmeldinger gi deg informasjon om hva mer som mangler.
-
-## Oppgave 2 - Slett produkt fra handlekurven
-
-Vi skal nå implementere funksjonen `removeItemFromCart` i [CartService](../backend/src/services/cart.ts). Gjerne se på `deleteProduct` i [ProductService](../backend/src/services/products.ts) for inspirasjon.
+We will now start building the functionality for adding products to the cart.
 
 Acceptance criteria:
 
-- `DELETE /cart/:id/removeItem/:itemId` skal fjerne et produkt fra en `cart-<id>` stream.
-- `ProductRemovedFromCart` event skal dukke opp i dashboardet i eventstore.
+- `POST /cart/:id/addItem` should add a product to a `cart-<id>` stream.
+- A `ProductAddedToCart` event should appear in the EventStore dashboard.
 
-Din oppgave er å implementere funksjonen `removeItemFromCart` i [CartService](../backend/src/services/cart.ts).
+Your task is to implement the functions `addItemToCart` and `addItemToCartStream` in [CartService](../backend/src/services/cart.ts). Feel free to look at `createProduct` in [ProductService](../backend/src/services/products.ts) for inspiration.
+You should generally only need to add code in the blocks with a `// TASK: ...` comment.
 
-Siden `getCart` ikke er implementert enda, kan du ikke bruke frontend for å teste funksjonen. Du kan kjøre http-requests i [requests.http](../backend/requests.http) i stedet. For å kalle riktig endepunkt må du ha både `cartId` og `itemId` som parametre. Du kan finne disse ved å se i EventStore dashboardet for en cart-stream og undersøke `ProductAddedToCart` eventen.
+To call the endpoint for adding a product, click "Add to Cart" on a product in the frontend. You will not see any changes in the frontend yet (that task is coming soon), but you can see that the event has been added in EventStore.
 
-Hint: Bruk `subject`-feltet i eventen for itemId. Denne skal være unik for hver instans av et produkt i handlekurven. Hvis du ikke gjorde dette i oppgave 1, bør du vurdere å ta en kikk tilbake på `addItemToCart` for å sette en fornuftig `subject`-verdi.
+Hint: the event `type` should be `CartEventTypes.ProductAddedToCart`. If you create an object with `{ type: CartEventTypes.ProductAddedToCart, ... }` in the `events` array in `addItemToCartStream`, the TypeScript error messages should tell you what else is missing.
 
-Workshoppen fortsetter i [Del 2](part2.md).
+Hint: the `subject` field in the event can be set to `cartId`.
+
+## Task 2 - Remove Product from Cart
+
+We will now implement the `removeItemFromCart` function in [CartService](../backend/src/services/cart.ts). Feel free to look at `deleteProduct` in [ProductService](../backend/src/services/products.ts) for inspiration.
+
+Acceptance criteria:
+
+- `DELETE /cart/:id/removeItem/:itemId` should remove a product from a `cart-<id>` stream.
+- A `ProductRemovedFromCart` event should appear in the EventStore dashboard.
+
+Your task is to implement the `removeItemFromCart` function in [CartService](../backend/src/services/cart.ts).
+
+Since `getCart` has not been implemented yet, you cannot use the frontend to test this function. You can run HTTP requests in [requests.http](../backend/requests.http) instead. To call the correct endpoint, you need both `cartId` and `itemId` as parameters. You can find these by looking at a cart stream in the EventStore dashboard and inspecting the `ProductAddedToCart` event.
+
+The workshop continues in [Part 2](part2.md).
 
 ---
 
-## Ordre
+## Orders
 
-Gjennom workshoppen vil det gå et parallelt løp med helt valgfrie oppgaver som innebærer å produsere et ordreløp. Tanken bak disse oppgavene er at du skal selv måtte ta valg som omhandler event sourcing og føle litt på hva som funker og hva som ikke funker. Disse oppgavene vil ikke få svarene utdelt i hver del, så om du ikke får til en oppgave så kan du ikke alltid gå videre til neste del. Fokuser på å fullføre oppgavene som er del av workshoppen og se på disse oppgavene om du blir raskt ferdig og ønsker se mer på event sourcing.
+Throughout the workshop there will be a parallel track of completely optional tasks for building an order flow. The idea behind these tasks is that you will have to make your own choices related to event sourcing and get a feel for what works and what does not. These tasks will not have answers provided in each part, so if you cannot complete a task you may not always be able to move on to the next one. Focus on completing the main workshop tasks, and look at these tasks if you finish quickly and want to explore event sourcing further.
 
-### Ordre oppgave 1 - Lage ordre eventer
+### Order Task 1 - Create Order Events
 
-I denne oppgaven skal du lage helt egne eventer for ordre basert på det som blir bestilt fra en handlekurv. I butikken så kan en bruker klikke "Checkout", dette vil kalle endepunktet `POST /order/checkout/:cartId`. Vi har laget selve endepunktet i [OrderRoute](../backend/src/routes/order.ts). Du skal implementere denne routen slik at en ordre-event blir produsert til EventStore.
+In this task, you will create your own events for orders based on what is ordered from a cart. In the shop, a user can click "Checkout", which will call the endpoint `POST /order/checkout/:cartId`. We have created the endpoint itself in [OrderRoute](../backend/src/routes/order.ts). You should implement this route so that an order event is produced to EventStore.
 
-Når du lager ordre-eventen, tenk gjerne gjennom hvor det gir mening at informasjonen lever mtp. business caset. E.g. gir det mening å kopiere produkt navnet eller burde dette leve i ordren?
+When creating the order event, think about where it makes sense for the information to live from a business perspective. For example, does it make sense to copy the product name, or should that live in the order?
 
 Acceptance criteria:
 
-- `POST /orders/checkout/:cartId` skal opprette en ny ordre
-- En event relatert til ordre skal dukke opp i dashboardet i eventstore
+- `POST /orders/checkout/:cartId` should create a new order.
+- An order-related event should appear in the EventStore dashboard.
 
 Optional criteria:
 
-- Tømme handlekurven når en ordre blir opprettet
+- Empty the cart when an order is created.
 
-Workshoppen fortsetter i [Del 2](part2.md).
+The workshop continues in [Part 2](part2.md).
