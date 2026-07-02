@@ -1,113 +1,94 @@
-# Del 3 - Cart Service V2
+# Part 3 - Cart Service V2
 
-Før du begynner på denne oppgaven, trykk på "Shop V2" i frontend navbar.
+Before you begin this task, click "Shop V2" in the frontend navbar.
 
-I denne delen skal vi implementere en projector (også kalt denormalizer) for å bygge tilstanden til handlekurven, og lagre denne i en database. Fordelen med denne tilnærmingen er at når vi gjør `getCart` kan vi lese ut tilstanden til handlekurven fra databasen direkte, uten å måtte lese ut hele cart-streamen fra eventstore for hver eneste request. Etter hvert som antall eventer i streamen vokser, vil det gå tregere og tregere å lese gjennom eventene.
+In this part, we will implement a projector (also called a denormalizer) to build the cart state and store it in a database. The advantage of this approach is that when we run `getCart`, we can read the cart state directly from the database without having to read the entire cart stream from EventStore for every single request. As the number of events in the stream grows, reading through the events will become slower and slower.
 
-Databasen vil kontinuerlig bli oppdatert med nye eventer som kommer inn i eventstore gjennom en `subscription`. Vi har allerede satt opp subscriptions i [index.ts](../backend/src/index.ts), så du trenger ikke å gjøre dette oppsettet selv.
+The database will be continuously updated with new events that come into EventStore through a `subscription`. We have already set up subscriptions in [index.ts](../backend/src/index.ts), so you do not need to do this setup yourself.
 
-Det er laget en [ProductServiceV2](../backend/src/services/productsV2.ts) som lagrer produkter i databasen, denne kan være nyttig å se på for inspirasjon.
+There is a [ProductServiceV2](../backend/src/services/productsV2.ts) that stores products in the database. It may be useful to look at for inspiration.
 
-## Oppgave 1 - Add Item to Cart V2
+## Task 1 - Add Item to Cart V2
 
-Vi skal nå implementere versjon 2 av `addItemToCart` funksjonen.
-
-Acceptance criteria:
-
-- `POST /cart/v2/:id/addItem` skal legge til et produkt i handlekurven fra databasen.
-- Info om produktet hentes fra databasen, ikke leses direkte fra eventstore.
-
-Din oppgave er å implementere funksjonen `addItemToCartV2` i [CartServiceV2](../backend/src/services/cartV2.ts).
-
-Det eneste vi trenger å gjøre i denne oppgaven er å bruke riktig funksjon fra [ProductsServiceV2](../backend/src/services/productsV2.ts) for å hente ut produktet.
-
-## Oppgave 2 - Handle Cart Event
-
-Vi skal nå håndtere eventer som blir lest ut fra `subscription` av cart-streamen.
+We will now implement version 2 of the `addItemToCart` function.
 
 Acceptance criteria:
 
-- `handleCartEvent` skal håndtere eventer som kommer inn i eventstore og oppdatere tilstanden til handlekurven i databasen.
+- `POST /cart/v2/:id/addItem` should add a product to the cart using data from the database.
+- Product information should be fetched from the database, not read directly from EventStore.
 
-Din oppgave er å implementere funksjonen `handleCartEvent` i [CartServiceV2](../backend/src/services/cartV2.ts). Her må vi først hente ut handlekurven fra databasen, og så oppdatere den basert på eventen. Hvis handlekurven ikke finnes i databasen, skal vi starte med en ny tom handlekurv.
+Your task is to implement the `addItemToCartV2` function in [CartServiceV2](../backend/src/services/cartV2.ts).
 
-I del 2 implementerte vi en funksjon som vil være nyttig her, som kan importes og brukes for å oppdatere handlekurven.
+The only thing we need to do in this task is use the correct function from [ProductsServiceV2](../backend/src/services/productsV2.ts) to fetch the product.
 
-For å inspisere databasen og se hva som er lagret i den, kan du for eksempel installere [MongoDB Compass](https://www.mongodb.com/try/download/compass). Når du har installert Compass, lager du en ny tilkobling til `mongodb://localhost:27017/`. I databasen som hete `test` kan du finne `carts` collection og inspisere innholdet. (Dette er valgfritt, men kan være nyttig for å sjekke at vi har lagt til riktig innhold i databasen. Du kan også fortsette til oppgave 3 for å se om det som blir lest fra databasen er riktig uten å sjekke MongoDB.)
+## Task 2 - Handle Cart Event
 
-## Oppgave 3 - Get Cart V2
-
-Nå som vi har lagret handlekurven i databasen, kan vi implementere funksjonen for å lese ut handlekurven.
+We will now handle events that are read from the cart stream `subscription`.
 
 Acceptance criteria:
 
-- `GET /cart/v2/:id` skal lese ut tilstanden til handlekurven fra databasen.
-- Handlekurven i Frontend skal vise nye produkter som legges til i handlekurven.
-- Når man trykker på Trash-ikonet, skal produktet fjernes fra handlekurven i UI.
+- `handleCartEvent` should handle events that come into EventStore and update the cart state in the database.
 
-Din oppgave er å implementere funksjonen `getCartV2` i [CartServiceV2](../backend/src/services/cartV2.ts).
+Your task is to implement the `handleCartEvent` function in [CartServiceV2](../backend/src/services/cartV2.ts). Here, we first need to fetch the cart from the database and then update it based on the event. If the cart does not exist in the database, we should start with a new empty cart.
 
-Her er det bare 1 linje med kode som trenger å endres.
+In Part 2, we implemented a function that will be useful here and can be imported and used to update the cart.
 
-Du kan oppleve at du må refreshe frontend for å se nye produkter som legges til i handlekurven. Kan du tenke deg hvorfor dette skjer? Kan du komme på noen forslag til hvordan vi kan unngå dette problemet?
+To inspect the database and see what has been stored in it, you can install [MongoDB Compass](https://www.mongodb.com/try/download/compass), for example. After installing Compass, create a new connection to `mongodb://localhost:27017/`. In the database named `test`, you can find the `carts` collection and inspect its contents. (This is optional, but it can be useful for checking that we have added the correct content to the database. You can also continue to task 3 to see whether what is read from the database is correct without checking MongoDB.)
 
-Workshoppen fortsetter i [Del 4](part4.md).
+## Task 3 - Get Cart V2
+
+Now that we have stored the cart in the database, we can implement the function for reading the cart.
+
+Acceptance criteria:
+
+- `GET /cart/v2/:id` should read the cart state from the database.
+- The cart in the frontend should show new products that are added to the cart.
+- When the Trash icon is clicked, the product should be removed from the cart in the UI.
+
+Your task is to implement the `getCartV2` function in [CartServiceV2](../backend/src/services/cartV2.ts).
+
+Only 1 line of code needs to be changed here.
+
+You may find that you need to refresh the frontend to see new products that are added to the cart. Can you think of why this happens? Can you suggest any ways to avoid this problem?
+
+The workshop continues in [Part 4](part4.md).
 
 ---
 
-## Bonusoppgave - Checkpoints
+## Bonus Task - Checkpoints
 
-Slik oppsettet er nå, starter `subscriptions` fra starten av streamen hver gang vi starter applikasjonen på nytt. Etter hver som det blir et par millioner eventer vil dette ta lang tid, og vi ønsker ikke at systemet skal slutte å oppdatere seg over lengre tid bare fordi en applikasjon måtte restartes.
+With the current setup, `subscriptions` start from the beginning of the stream every time we restart the application. Once there are a couple million events, this will take a long time, and we do not want the system to stop updating itself for a long period just because an application had to restart.
 
-For å unngå å starte på nytt hver gang, kan vi lagre `checkpoints` i databasen etter hvert som vi leser eventer. Når vi starter applikasjonen på nytt, kan vi lese ut siste `checkpoint` og starte `subscriptions` fra der.
+To avoid starting over every time, we can store `checkpoints` in the database as we read events. When we restart the application, we can read the latest `checkpoint` and start `subscriptions` from there.
 
-I kurrentDb bruker vi `revision` som checkpoint. For å velge startpunktet for `subscriptions` kan vi bruke `fromRevision` parameter i `SubscribeToStreamOptions` som er satt opp i [index.ts](../backend/src/index.ts).
+In KurrentDB, we use `revision` as the checkpoint. To choose the starting point for `subscriptions`, we can use the `fromRevision` parameter in `SubscribeToStreamOptions`, which is set up in [index.ts](../backend/src/index.ts).
 
 Acceptance criteria:
 
-- `checkpoints` skal lagres i databasen etter hvert som vi leser eventer.
-- `checkpoints` skal leses ut fra databasen når vi starter applikasjonen på nytt, og sette `fromRevision` parameter i `SubscribeToStreamOptions` til dette.
+- `checkpoints` should be stored in the database as we read events.
+- `checkpoints` should be read from the database when we restart the application, and the `fromRevision` parameter in `SubscribeToStreamOptions` should be set to this value.
 
-Her står du ganske fritt til hvordan du implementerer denne funksjonaliteten. Vi har satt opp `checkpoints` som en collection i databasen, så du kan bruke denne for å lagre og lese ut `checkpoints`. Her er det lov å bruke AI hvis man sitter fast. Du kan bruke typen `Checkpoint` som er definert i [types.ts](../backend/src/types.ts) for å lagre og lese ut `checkpoints`, eller du kan lage en egen type.
+You are fairly free to decide how to implement this functionality. We have set up `checkpoints` as a collection in the database, so you can use this to store and read `checkpoints`. It is okay to use AI here if you get stuck. You can use the `Checkpoint` type defined in [types.ts](../backend/src/types.ts) to store and read `checkpoints`, or you can create your own type.
 
 ---
 
-## Ordre
+## Orders
 
-### Ordre oppgave 5 - Order projectors
+### Order Task 5 - Order Projectors
 
-I denne oppgaven skal vi forbedre løsningen fra [ordre oppgave 2-4](task2.md) ved å lage en projector som produserer en read model i mongodb. Vi ønsker at denne read modellen skal hentes direkte i api-et.
+In this task, we will improve the solution from [order tasks 2-4](part2.md) by creating a projector that produces a read model in MongoDB. We want this read model to be fetched directly in the API.
 
-Tips: Det er potensielt enklere å lage flere projectors :)
+Tip: It may be easier to create multiple projectors :)
 
-NB: Du kan måtte gjøre endringer på [storageClient](../backend/src/clients/storageClient.ts).
-
-Acceptance criteria:
-
-- Endepunktene skal fungere som før refaktoreringen
-- Det skal ikke trenge å gå noe trafikk til EventStore ved forespørsel fra api-et
-
-Optional criteria:
-
-- Lage checkpoints slik at applikasjonen ikke trenger spole gjennom alle eventene hver oppstart
-
-Workshoppen fortsetter i [Del 4](part4.md).
-
-## Ordre oppgave 5 - Order projectors
-
-I denne oppgaven skal vi forbedre løsningen fra [ordre oppgave 2-4](task2.md) ved å lage en projectorer som produserer en read model i mongodb. Vi ønsker at denne read modellen skal hentes direte i api-et.
-
-Tips: Det er potensielt enklere å lage flere projectors :)
-
-NB: Du kan måtte gjøre endringer på [storageClient](../backend/src/clients/storageClient.ts).
+Note: You may need to make changes to [storageClient](../backend/src/clients/storageClient.ts).
 
 Acceptance criteria:
 
-- Endepunktene skal fungere som før refaktoreringen
-- Det skal ikke trenge å gå noe trafikk til EventStore ved forespørsel fra api-et
+- The endpoints should work as they did before the refactoring.
+- No traffic should need to go to EventStore when the API receives a request.
 
 Optional criteria:
 
-- Lage checkpoints slik at applikasjonen ikke trenger spole gjennom alle eventene hver oppstart
+- Create checkpoints so the application does not need to replay all events on every startup.
 
-Workshoppen fortsetter i [Del 4](part4.md).
+The workshop continues in [Part 4](part4.md).

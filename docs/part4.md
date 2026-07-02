@@ -1,45 +1,45 @@
-# Del 4 - Nye krav
+# Part 4 - New Requirements
 
-Noen har bestemt at vi skal ha med valuta i handlekurven. Din teamlead har bestemt at vi løser dette ved å lage en ny versjon av `ProductAddedToCartEvent` som inneholder valuta som en del av `price`-feltet.
+Someone has decided that we need to include currency in the cart. Your team lead has decided that we will solve this by creating a new version of `ProductAddedToCartEvent` that includes currency as part of the `price` field.
 
-`ProductAddedToCartEventV2` er allerede definert i [events.ts](../backend/src/events.ts).
+`ProductAddedToCartEventV2` is already defined in [events.ts](../backend/src/events.ts).
 
-## Oppgave 1 - ProductAddedToCartEventV2
+## Task 1 - ProductAddedToCartEventV2
 
-Når man legger til et produkt i handlekurven, skal vi nå opprette denne nye eventen.
+When a product is added to the cart, we should now create this new event.
 
-Din oppgave er å endre funksjonen `addItemToStream` i [CartService](../backend/src/services/cart.ts) slik at den oppretter `ProductAddedToCartEventV2` i stedet for `ProductAddedToCartEvent`.
-Valuta er allerede en del av `Product`-objektet, så du kan bruke denne for å få alle verdiene du trenger.
+Your task is to change the `addItemToStream` function in [CartService](../backend/src/services/cart.ts) so that it creates `ProductAddedToCartEventV2` instead of `ProductAddedToCartEvent`.
+Currency is already part of the `Product` object, so you can use it to get all the values you need.
 
-## Oppgave 2 - Håndtere ProductAddedToCartEventV2
+## Task 2 - Handle ProductAddedToCartEventV2
 
-En av karakteristikkene i Event Sourcing er at vi ikke kan endre eller slette eventer. Dette betyr at vi må fremdeles håndtere den gamle eventen, `ProductAddedToCartEvent`, samtidig som vi håndterer den nye eventen, `ProductAddedToCartEventV2`.
+One of the characteristics of event sourcing is that we cannot change or delete events. This means that we still need to handle the old event, `ProductAddedToCartEvent`, while also handling the new event, `ProductAddedToCartEventV2`.
 
-Din oppgave er å endre funksjonen `updateCart` i [CartService](../backend/src/services/cart.ts) slik at den håndterer begge eventene. Hvis du får V2 av eventen skal du sette `productCurrency`-feltet på `CartItem`-objektet til `currency`-feltet fra eventen sin `price`.
+Your task is to change the `updateCart` function in [CartService](../backend/src/services/cart.ts) so that it handles both events. If you receive V2 of the event, set the `productCurrency` field on the `CartItem` object to the `currency` field from the event's `price`.
 
 Acceptance criteria:
 
-- `updateCart` skal håndtere både V1 og V2 av eventen.
-- Frontend skal vise valutta i handlekurven for nye elementer som legges til i handlekurven.
+- `updateCart` should handle both V1 and V2 of the event.
+- The frontend should show currency in the cart for new items that are added to the cart.
 
 ---
 
-## Ordre
+## Orders
 
-### Ordre oppgave 6 - Order reactor
+### Order Task 6 - Order Reactor
 
-En stor fordel med Event Sourcing er at vi enkelt kan bryte opp systemet i isolerte biter som jobber isolert, litt som et samlebånd. Vi kan produsere en event og ha en tjeneste som lytter på denne eventen og basert på den utfører en side effekt og produserer en ny event. I utgangspunktet funker den veldig likt en projector, men en viktig distinksjon er at den har en sideeffekt. Basert på hvor viktig sideeffekten er så kan vi ha strenge krav til å levere den minst en gang eller i e.g bank, levere bare en gang. Derfor er det ekstra viktig i denne sammenheng å holde checkpoints eller id på enkelt eventer slik at man ikke ender opp med å lage duplikater. (I denne oppgaven er det ikke så krise, men verdt å tenke på!)
+A major advantage of event sourcing is that we can easily split the system into isolated pieces that work independently, a bit like an assembly line. We can produce an event and have a service listen for that event, perform a side effect based on it, and then produce a new event. This works very similarly to a projector, but an important distinction is that it has a side effect. Depending on how important the side effect is, we may have strict requirements to deliver it at least once or, for example in banking, exactly once. That is why it is especially important in this context to keep checkpoints or IDs for individual events so that we do not end up creating duplicates. (In this task, it is not that critical, but it is worth thinking about!)
 
-Event Sourcing går ofte veldig hånd i hånd med bruk av orkestreringspatterns som saga og workflow på det som er veldig sentrale biter av applikasjonen.
+Event sourcing often goes hand in hand with orchestration patterns such as sagas and workflows for the very central parts of an application.
 
-I denne oppgaven skal du produsere en invoice, men om du har en egen ide er det bare å følge denne. (e.g sende bekreftelses-epost, etc.)
+In this task, you will produce an invoice, but if you have your own idea you can follow that instead. (For example, sending a confirmation email, etc.)
 
 Acceptance criteria:
 
-- Du skal opprette en subscription som lytter på `OrderCreated` eventen
-- Når en `OrderCreated` event blir produsert, skal en `InvoiceCreated` event produseres kort tid etter
+- You should create a subscription that listens for the `OrderCreated` event.
+- When an `OrderCreated` event is produced, an `InvoiceCreated` event should be produced shortly after.
 
-Eventen må inneholde følgende:
+The event must contain the following:
 
 ```json
 {
@@ -53,22 +53,22 @@ Eventen må inneholde følgende:
 
 Optional criteria:
 
-- Tenk gjennom / lag en reactor som purrer 2 dager før fristen
+- Think through or create a reactor that sends a reminder 2 days before the due date.
 
-### Ordre oppgave 7 - Server sent events
+### Order Task 7 - Server-Sent Events
 
-En effekt av at hele systemet er sourcet fra events er at vi i teorien kan eksponere eventene direkte til en klient eller integrasjon. Dette gjør at vi kan få sanntidsoppdatering. I denne oppgaven skal du implementere sanntidsoppdatering av grafen. Generelt vil vi aldri eksponere eventene rå, men gjennom et derivat som vi har mer kontroll på. På denne måten gjør vi det enklere å introdusere nye versjoner av en event eller funksjonalitet uten at det fører til breaking changes.
+One effect of having the entire system sourced from events is that, in theory, we can expose the events directly to a client or integration. This allows us to get real-time updates. In this task, you will implement real-time updates for the graph. In general, we would never expose the raw events, but instead expose a derived representation that we have more control over. This makes it easier to introduce new versions of an event or functionality without causing breaking changes.
 
-Server Sent Events lar deg i grunn holde en get connection mot en server (sett fra klienten sitt perspektiv). Dette lar deg sende oppdateringer på en måte som er enklere enn web sockets. Admin siden er satt opp til å kunne koble seg mot et SSE endepunkt på `GET /orders/live` og forventer følgende datastruktur på eventene.
+Server-Sent Events let you essentially keep a GET connection open to a server from the client's perspective. This lets you send updates in a way that is simpler than WebSockets. The admin page is set up to connect to an SSE endpoint at `GET /orders/live` and expects the following data structure for the events.
 
-NB: Denne kan ikke lett testes med requests.http da det er en persistert connection.
+Note: This cannot easily be tested with `requests.http` because it is a persistent connection.
 
 Acceptance criteria:
 
-- `GET /orders/live` responderer som et SSE endepunkt
-- Admin grensesnittet oppdateres live når du gjør en checkout. (Åpne to tabs for å verifisere)
+- `GET /orders/live` should respond as an SSE endpoint.
+- The admin interface should update live when you perform a checkout. (Open two tabs to verify.)
 
-Eksempel payload:
+Example payload:
 
 ```json
 {
@@ -79,7 +79,7 @@ Eksempel payload:
 }
 ```
 
-Her er et kort eksempel på hvordan du kan eksponere server-sent events (SSE) i Express, på endepunktet `/orders/live`:
+Here is a short example of how you can expose server-sent events (SSE) in Express on the `/orders/live` endpoint:
 
 ```js
 router.get("/orders/live", (req, res) => {
@@ -88,7 +88,7 @@ router.get("/orders/live", (req, res) => {
   res.setHeader("Connection", "keep-alive");
   res.flushHeaders();
 
-  // Her kan du sende nye ordre når de kommer inn:
+  // Here you can send new orders as they come in:
   const orderEvent = {
     orderId: "123",
     items: [{ productId: "123123", productName: "Kaffi", price: 100 }],
@@ -97,7 +97,7 @@ router.get("/orders/live", (req, res) => {
   };
   res.write(`data: ${JSON.stringify(orderEvent)}\n\n`);
 
-  // Lukk forbindelsen når klienten kobler fra
+  // Close the connection when the client disconnects
   req.on("close", () => res.end());
 });
 ```
