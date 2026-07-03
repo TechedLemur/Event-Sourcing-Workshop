@@ -59,7 +59,7 @@ Gjennom workshoppen vil det gå et parallelt løp med helt valgfrie oppgaver som
 
 ### Ordre oppgave 1 - Lage ordre eventer
 
-I denne oppgaven skal du lage helt egne eventer for ordre basert på det som blir bestilt fra en handlekurv. I butikken så kan en bruker klikke "Checkout", dette vil kalle endepunktet `POST /order/checkout/:cartId`. Vi har laget selve endepunktet i [OrderRoute](../../backend/src/routes/order.ts). Du skal implementere denne routen slik at en ordre-event blir produsert til EventStore.
+I denne oppgaven skal du lage helt egne eventer for ordre basert på det som blir bestilt fra en handlekurv. I butikken så kan en bruker klikke "Checkout", dette vil kalle endepunktet `POST /orders/checkout/:cartId`. Vi har laget selve endepunktet i [OrderRoute](../../backend/src/routes/order.ts). Du skal implementere denne routen slik at en ordre-event blir produsert til EventStore.
 
 Når du lager ordre-eventen, tenk gjerne gjennom hvor det gir mening at informasjonen lever mtp. business caset. E.g. gir det mening å kopiere produkt navnet eller burde dette leve i ordren?
 

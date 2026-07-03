@@ -59,7 +59,7 @@ Throughout the workshop there will be a parallel track of completely optional ta
 
 ### Order Task 1 - Create Order Events
 
-In this task, you will create your own events for orders based on what is ordered from a cart. In the shop, a user can click "Checkout", which will call the endpoint `POST /order/checkout/:cartId`. We have created the endpoint itself in [OrderRoute](../backend/src/routes/order.ts). You should implement this route so that an order event is produced to EventStore.
+In this task, you will create your own events for orders based on what is ordered from a cart. In the shop, a user can click "Checkout", which will call the endpoint `POST /orders/checkout/:cartId`. We have created the endpoint itself in [OrderRoute](../backend/src/routes/order.ts). You should implement this route so that an order event is produced to EventStore.
 
 When creating the order event, think about where it makes sense for the information to live from a business perspective. For example, does it make sense to copy the product name, or should that live in the order?
 

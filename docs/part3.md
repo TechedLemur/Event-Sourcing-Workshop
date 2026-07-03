@@ -6,7 +6,7 @@ In this part, we will implement a projector (also called a denormalizer) to buil
 
 The database will be continuously updated with new events that come into EventStore through a `subscription`. We have already set up subscriptions in [index.ts](../backend/src/index.ts), so you do not need to do this setup yourself.
 
-There is a [ProductServiceV2](../backend/src/services/productsV2.ts) that stores products in the database. It may be useful to look at for inspiration.
+There is a [ProductsServiceV2](../backend/src/services/productsV2.ts) that stores products in the database. It may be useful to look at for inspiration.
 
 ## Task 1 - Add Item to Cart V2
 

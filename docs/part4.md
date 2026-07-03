@@ -1,6 +1,6 @@
 # Part 4 - New Requirements
 
-Someone has decided that we need to include currency in the cart. Your team lead has decided that we will solve this by creating a new version of `ProductAddedToCartEvent` that includes currency as part of the `price` field.
+Someone has decided that we need to include currency in the cart. Your team lead has decided that we will solve this by creating a new version of `ProductAddedToCartEvent` that includes currency as part of the `productPrice` field.
 
 `ProductAddedToCartEventV2` is already defined in [events.ts](../backend/src/events.ts).
 
@@ -8,14 +8,14 @@ Someone has decided that we need to include currency in the cart. Your team lead
 
 When a product is added to the cart, we should now create this new event.
 
-Your task is to change the `addItemToStream` function in [CartService](../backend/src/services/cart.ts) so that it creates `ProductAddedToCartEventV2` instead of `ProductAddedToCartEvent`.
+Your task is to change the `addItemToCartStream` function in [CartService](../backend/src/services/cart.ts) so that it creates `ProductAddedToCartEventV2` instead of `ProductAddedToCartEvent`.
 Currency is already part of the `Product` object, so you can use it to get all the values you need.
 
 ## Task 2 - Handle ProductAddedToCartEventV2
 
 One of the characteristics of event sourcing is that we cannot change or delete events. This means that we still need to handle the old event, `ProductAddedToCartEvent`, while also handling the new event, `ProductAddedToCartEventV2`.
 
-Your task is to change the `updateCart` function in [CartService](../backend/src/services/cart.ts) so that it handles both events. If you receive V2 of the event, set the `productCurrency` field on the `CartItem` object to the `currency` field from the event's `price`.
+Your task is to change the `updateCart` function in [CartService](../backend/src/services/cart.ts) so that it handles both events. If you receive V2 of the event, set the `productCurrency` field on the `CartItem` object to the `currency` field from the event's `productPrice`.
 
 Acceptance criteria:
 
